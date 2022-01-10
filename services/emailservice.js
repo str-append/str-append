@@ -23,7 +23,7 @@ async function sendmail({from, to, subject, text, html}) {
     text,
     html,
   });
-  //console.log(info);
+  console.log("mail sent successfully!");
 }
 //this sendMail() is the method of NodeMailer
 
