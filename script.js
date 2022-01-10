@@ -18,7 +18,7 @@ async function deleteData() {
   if (files.length) {
     for (const file of files) {
       try {
-        fs.unlinkSync('https://flsharefilesharingapp.herokuapp.com/file.path');
+        fs.unlinkSync(file.path);
         await file.remove();
         console.log(`File removed succesfully ${file.filename}`);
       } catch (err) {
