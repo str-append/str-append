@@ -43,7 +43,7 @@
       color: deeppink;
     }
 
-    form {
+    #myform {
       text-align: center;
       margin: auto;
       margin-top: 213px;
@@ -82,19 +82,20 @@
 
     #progressbar {
       width: 60%;
-    height: 12px;
-    display: none;
-    text-align: center;
-    margin: auto;
-    position: relative;
-    top: 30px;
-    z-index: 2;
+      height: 12px;
+      display: none;
+      text-align: center;
+      margin: auto;
+      position: relative;
+      top: 30px;
+      z-index: 2;
     }
 
-    #uploadingStatus{
+    #uploadingStatus {
       position: relative;
-    top: 13px;
+      top: 13px;
     }
+
     b {
       color: lightcoral;
     }
@@ -102,13 +103,15 @@
     .link {
       display: none;
       margin: auto;
-      width: 70%;
       border: 2px dashed #0432ff;
       margin-top: 29px;
       background: yellow;
       height: 59px;
-      padding: 12px;
+      padding: 10px 20px;
       text-align: center;
+      width: fit-content;
+      height: fit-content;
+
     }
 
     #browse {
@@ -124,10 +127,45 @@
       font-size: 1.3rem;
     }
 
-    .tooltip {
-      position: relative;
-      display: inline-block;
-      border-bottom: 1px dotted black;
+
+
+    .email {
+      text-align: center;
+      margin: auto;
+      margin-top: 23px;
+      border: 1px dashed white;
+      border-radius: 20px;
+      background: black;
+      color: white;
+      /* box-shadow: 0px 0px 150px #ff0000; */
+      display: none;
+      width: fit-content;
+      height: fit-content;
+    }
+
+    .email table {
+      margin: auto;
+      text-align: center;
+    }
+
+
+    .toast {
+      bottom: -200px;
+      color: white;
+      text-align: center;
+      margin: auto;
+      width: fit-content;
+      height: fit-content;
+      background: blue;
+      position: absolute;
+      left: 50%;
+      border: 1px solid wheat;
+      padding: 5px 20px;
+      border-radius: 6px;
+      z-index: 4;
+      box-shadow: -9px 6px 15px 10px rgba(255, 255, 255, 0.13), 9px 3px 15px 5px rgba(255, 255, 255, 0.16), 0px -3px 15px 5px rgba(255, 255, 255, 0.47);
+      transition: transform ease-in-out 1.5s;
+
     }
   </style>
 </head>
@@ -139,9 +177,11 @@
         FLShare <span id="subheading">File Sharing App</span>
       </p>
     </div>
-    <form id="myform" method="post" action="/api/files" enctype="multipart/form-data" ondrop="dropHandler(event);" ondragover="dragOverHandler(event);">
+    <form id="myform" method="post" action="/api/files" enctype="multipart/form-data" ondrop="dropHandler(event);"
+      ondragover="dragOverHandler(event);">
       <p id="brow">
-        Drag And drop file or <span id="browse" onclick="brobtn()">Browse File</span>
+        Drag And drop file or
+        <span id="browse" onclick="brobtn()">Browse File</span>
       </p>
       <input type="file" name="myfile" id="myfile" onchange="upload()" style="display: none" />
       <!-- name should be same as in server side  (here we used "myfile") -->
@@ -151,22 +191,52 @@
       <progress id="progressbar" value="0" max="100"></progress>
       <div class="progress">
         <div class="inprogress">
-          <p id="uploadingStatus" style="position: relative; top: 13px;">.</p> <!--  -->
+          <p id="uploadingStatus" style="position: relative; top: 13px">.</p>
+          <!--  -->
         </div>
       </div>
       <br />
     </form>
 
     <div class="link">
-      Link to Download Page: <br> <a id="link1" href="hjh">Link:</a>
+      Link to Download Page: <br />
+      <a id="link1" href="hjh">Link:</a>
+    </div>
+
+    <div class="email">
+      Share Link via Email!
+      <form id="emailSend" onsubmit="sendemail(event)" method="post">
+        <table>
+          <tr>
+            <td>Your Email :</td>
+            <td><input type="email" name="from" id="from" required /></td>
+          </tr>
+          <tr>
+            <td>Receiver's Email:</td>
+            <td><input type="email" name="to" id="to" required /></td>
+          </tr>
+          <td colspan="2">
+            <input type="submit" value="Send" style="cursor:pointer;">
+          </td>
+        </table>
+      </form>
+    </div>
+    <div class="toast">
+      Its a Toast!
     </div>
   </div>
 </body>
 
+
+
+
+
 <script>
   var a = document.getElementById("link1");
   console.log(a.innerText);
-
+  var to;
+  var from;
+  var uuid;
 
   //on dragging
   function dragOverHandler(ev) {
@@ -174,24 +244,23 @@
     ev.preventDefault();
   }
 
-
   //on dropping
   function dropHandler(ev) {
     console.log("File(s) dropped");
-    ev.preventDefault();    // Prevent default behavior (Prevent file from being opened  which is default behaviour of browsers)
+    ev
+      .preventDefault(); // Prevent default behavior (Prevent file from being opened  which is default behaviour of browsers)
 
     // Use DataTransferItemList interface to access the file(s)
     const file = ev.dataTransfer.files;
     // console.log("... file.name = " + file.name);
 
-    var input = document.getElementById("myfile");     //it is the input type="file" element
-    input.files =file;   //input is the element having "files" as argument and "file" is the file coming from ev.dataTransfer.files
+    var input = document.getElementById("myfile"); //it is the input type="file" element
+    input.files =
+      file; //input is the element having "files" as argument and "file" is the file coming from ev.dataTransfer.files
     upload(); //it will run the upload method and now since file list is already added;
-    console.log("running in up.html line 171",file);
+    console.log("running in up.html line 171", file);
     //
   }
-
-  
 
   //it will run onchange in input or on drop (as used there;)
   function upload() {
@@ -202,45 +271,50 @@
     // console.log(file);
 
     var para = document.getElementById("size");
-    para.innerHTML = `<b>File Name</b>: <i>${file.name}</i> <br> <b>File Size:</b> ${Math.round(file.size / 1000)}KB <br> `;
+    para.innerHTML = `<b>File Name</b>: <i>${
+        file.name
+      }</i> <br> <b>File Size:</b> ${Math.round(file.size / 1000)}KB <br> `;
 
     var formdata = new FormData();
     formdata.append("myfile", file, file.name);
 
-    var inporgress = document.getElementsByClassName("inprogress")[0]; //since classname gives an array of elements we need to use [0];
-
+    var inporgress = document.getElementsByClassName("inprogress")[
+      0]; //since classname gives an array of elements we need to use [0];
 
     //xmlhttp request
     var xhr = new XMLHttpRequest();
-    xhr.onreadystatechange = function () 
-    {
-      if (this.readyState == 4 && this.status == 200) 
-      {
+    xhr.onreadystatechange = function () {
+      if (this.readyState == 4 && this.status == 200) {
         shlink(JSON.parse(xhr.response)); //since response from the server is in json so JSON.parse is used;
+        showtoast("Link Generated!");
       }
     };
 
     //use xhr.onreadystatechange before xhr.open
-    
-    xhr.upload.onprogress = function (e) 
-    {
+
+    xhr.upload.onprogress = function (e) {
       var percentComplete = Math.ceil((e.loaded / e.total) * 100); //for percentage uploaded
       pb.value = percentComplete; //progress bar
       inporgress.style.width = `${percentComplete}%`; //div progress bar
-
-      var uploadingStatus = documnet.getElementById("uploadingStatus");
-      uploadingStatus.innerText = `Uploading...${percentComplete}%` ;
-      if(percentComplete ==100)
-      {
-        uploadingStatus.innerText = "Uploaded Successfully!"
+      //
+      pb.style.display = "block";
+      document.getElementsByClassName("progress")[0].style.display = "block";
+      //
+      console.log(percentComplete);
+      var uploadingStatus = document.getElementById("uploadingStatus");
+      uploadingStatus.innerText = `Uploading...${percentComplete}%`;
+      if (percentComplete == 100) {
+        uploadingStatus.innerText = "Uploaded Successfully!";
       }
     };
 
-
-    xhr.open("POST", "https://flsharefilesharingapp.herokuapp.com/api/files", true); //http://localhost:3000/api/files
+    xhr.open("POST", "https://flsharefilesharingapp.herokuapp.com/api/files",
+      true); //http://localhost:3000/api/files    https://flsharefilesharingapp.herokuapp.com/api/files
     xhr.send(formdata);
 
-    shlink = ({file: url}) => {
+    shlink = ({
+      file: url
+    }) => {
       console.log(url);
       console.log("running inside shlink() inside the upload()");
       var hlink = document.getElementById("link1");
@@ -248,17 +322,54 @@
       hlink.href = url;
       var divlink = document.getElementsByClassName("link")[0];
       divlink.style.display = "block";
-      var pb = document.getElementById("progressbar");
-      pb.style.display = "block";
-      document.getElementsByClassName("progress")[0].style.display = "block";
+      // var pb = document.getElementById("progressbar");
 
-
-      
+      //email send
+      document.getElementsByClassName("email")[0].style.display = "block"
+      uuid = url.split("/")[4];
     };
   }
   //click on browse button dynamically
   function brobtn() {
     document.getElementById("myfile").click();
+  }
+
+
+  //email sending...
+  function sendemail(e) {
+    e.preventDefault();
+    to = document.getElementById("to").value;
+    from = document.getElementById("from").value;
+    console.log(to, from, uuid);
+    const formdata = {
+      "uuid": uuid,
+      "to": to,
+      "from": from
+    }
+    fetch("https://flsharefilesharingapp.herokuapp.com/api/files/send", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(formdata),
+    }).then((res) => res.json()).then((data) => {
+      if (data.sucess) {
+        showtoast("Email Sent Successfully");
+      }
+    })
+  }
+
+  //toast 
+  var toastTimer;
+
+  function showtoast(msg) {
+    let toast = document.getElementsByClassName("toast")[0]
+    toast.innerText = msg;
+    toast.style.transform = "translate(-50%,-300px)";
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => {
+      toast.style.transform = "translate(-50%,300px)";
+    }, 2000)
   }
 </script>
 
