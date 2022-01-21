@@ -49,7 +49,8 @@
       margin-top: 213px;
       border: 1px dashed white;
       border-radius: 30px;
-      width: 70%;
+      width: fit-content;
+      padding: 20px 40px;
       background: black;
       color: white;
       box-shadow: 0px 0px 150px #ff0000;
@@ -63,7 +64,7 @@
     .progress {
       border: 2px solid red;
       height: 50px;
-      width: 80%;
+      width: fit-content;
       margin: auto;
       margin-top: -21px;
       border-radius: 4px;
@@ -87,7 +88,7 @@
       text-align: center;
       margin: auto;
       position: relative;
-      top: 30px;
+      top: 49px;
       z-index: 2;
     }
 
@@ -150,6 +151,7 @@
 
 
     .toast {
+      display: none;
       bottom: -200px;
       color: white;
       text-align: center;
@@ -164,7 +166,7 @@
       border-radius: 6px;
       z-index: 4;
       box-shadow: -9px 6px 15px 10px rgba(255, 255, 255, 0.13), 9px 3px 15px 5px rgba(255, 255, 255, 0.16), 0px -3px 15px 5px rgba(255, 255, 255, 0.47);
-      transition: transform ease-in-out 1.5s;
+      transition: transform ease-in-out 3s;
 
     }
   </style>
@@ -230,8 +232,13 @@
 
 
 
-
+<script src="./jquery.js"></script>
 <script>
+
+  var hosturl ="http://localhost:3000" //"https://flsharefilesharingapp.herokuapp.com";
+  var fileurl = `${hosturl}/api/files`;
+  var emailurl = `${hosturl}/api/files/send`;
+
   var a = document.getElementById("link1");
   console.log(a.innerText);
   var to;
@@ -308,7 +315,9 @@
       }
     };
 
-    xhr.open("POST", "https://flsharefilesharingapp.herokuapp.com/api/files",
+    
+    //"https://flsharefilesharingapp.herokuapp.com/api/files"
+    xhr.open("POST", fileurl,
       true); //http://localhost:3000/api/files    https://flsharefilesharingapp.herokuapp.com/api/files
     xhr.send(formdata);
 
@@ -346,7 +355,9 @@
       "to": to,
       "from": from
     }
-    fetch("https://flsharefilesharingapp.herokuapp.com/api/files/send", {
+
+    //https://flsharefilesharingapp.herokuapp.com/api/files/send
+    fetch(emailurl, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -365,10 +376,12 @@
   function showtoast(msg) {
     let toast = document.getElementsByClassName("toast")[0]
     toast.innerText = msg;
-    toast.style.transform = "translate(-50%,-300px)";
+    toast.style.display = "block";
+    toast.style.transform = "translateY(-300px)";
     clearTimeout(toastTimer);
     toastTimer = setTimeout(() => {
-      toast.style.transform = "translate(-50%,300px)";
+      toast.style.transform = "translateY(300px)";
+      toast.style.display = "none";
     }, 2000)
   }
 </script>
